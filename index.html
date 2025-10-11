@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Voice Form Filler</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:24px;background:#f7f9fc;color:#111}
+    .container{max-width:760px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;box-shadow:0 6px 18px rgba(20,30,60,0.08)}
+    h1{margin:0 0 8px;font-size:24px}
+    p.lead{margin:0 0 18px;color:#4b5563}
+    .field{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    label{width:120px;font-weight:600}
+    input[type="text"]{flex:1;padding:10px;border:1px solid #d1d5db;border-radius:6px}
+    .controls{display:flex;gap:8px;margin-top:12px}
+    button{padding:10px 14px;border-radius:8px;border:0;background:#2563eb;color:white;cursor:pointer}
+    button.secondary{background:#6b7280}
+    .status{margin-top:12px;color:#0f172a;font-weight:600}
+    .hint{margin-top:8px;color:#6b7280;font-size:13px}
+    .transcript{margin-top:10px;padding:10px;border-radius:8px;background:#f1f5f9;border:1px dashed #e2e8f0;color:#0b1220}
+    .small{font-size:13px;color:#475569}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Voice Form Filler</h1>
+    <p class="lead">Click *Start* and speak the fields. Recognized phrases will populate the inputs. Works best in Chrome/Edge.</p>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="e.g. Alice Sharma" />
+    </div>
+
+    <div class="field">
+      <label for="age">Age</label>
+      <input id="age" type="text" placeholder="e.g. 29" />
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="text" placeholder="e.g. alice@example.com" />
+    </div>
+
+    <div class="field">
+      <label for="city">City</label>
+      <input id="city" type="text" placeholder="e.g. Hyderabad" />
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">Start Recording</button>
+      <button id="stopBtn" class="secondary" disabled>Stop</button>
+      <button id="autoFillBtn" class="secondary">Auto-Fill From Transcript</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+    </div>
+
+    <div class="status" id="status">Idle</div>
+    <div class="hint">Speak naturally. Try phrases like: <span class="small">"Name is John Doe", "Age is 30", "Email is john at example dot com", "City is Pune"</span></div>
+
+    <div class="transcript" id="transcript" aria-live="polite">Transcript will appear here...</div>
+
+    <p class="small" style="margin-top:12px">Advanced: you can also click an input and press the microphone icon on mobile Chrome (this page uses browser speech recognition).</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
