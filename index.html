@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome | Voice Form Filler</title>
-  <link rel="stylesheet" href="index.css" />
-
-    </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Filling | Voice Input</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body class="form-page">
-  <div class="form-container">
-    <!-- Your inputs here -->
-    <input id="name" type="text" />
-    <input id="age" type="text" />
-    <input id="email" type="text" />
-    <input id="city" type="text" />
-    
+  <div class="container">
+    <h1>Voice Form Filler</h1>
+    <p class="lead">Click Start and speak. Recognized phrases will populate the inputs. Works best in Chrome/Edge.</p>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="e.g. Alice Sharma" />
+    </div>
+
+    <div class="field">
+      <label for="age">Age</label>
+      <input id="age" type="text" placeholder="e.g. 29" />
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="text" placeholder="e.g. alice@example.com" />
+    </div>
+
+    <div class="field">
+      <label for="city">City</label>
+      <input id="city" type="text" placeholder="e.g. Hyderabad" />
+    </div>
+
     <div class="controls">
       <button id="startBtn">Start Recording</button>
       <button id="stopBtn" class="secondary" disabled>Stop</button>
@@ -22,11 +38,11 @@
       <button id="clearBtn" class="secondary">Clear</button>
     </div>
 
-    <div id="status">Idle</div>
-    <div id="transcript">Transcript will appear here...</div>
-    <a href="start.html">Back to Home</a>
+    <div class="status" id="status">Idle</div>
+    <div class="transcript" id="transcript">Transcript will appear here...</div>
+    <a href="index.html" class="back-btn">⬅️ Back to Home</a>
   </div>
 
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

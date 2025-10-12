@@ -7,7 +7,7 @@ body {
 
 /* Welcome Page */
 .welcome-page {
-  background: url('https://images.unsplash.com/photo-1522204502585-3e03b5a7bc59?auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+  background: url('https://images.unsplash.com/photo-1522204502585-3e03b5a7bc59?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -20,19 +20,82 @@ body {
   border-radius: 20px;
 }
 
+.start-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: #00b894;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
 /* Form Page */
 .form-page {
-  background: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+  background: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.form-container {
+.container {
   background: rgba(0,0,0,0.7);
   padding: 30px;
   border-radius: 20px;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+label {
+  width: 100px;
+  font-weight: 600;
+  text-align: left;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.controls button {
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+#startBtn { background: #0984e3; color: white; }
+#stopBtn { background: #d63031; color: white; }
+#autoFillBtn { background: #00b894; color: white; }
+#clearBtn { background: #636e72; color: white; }
+
+.status {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.transcript {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+}
+.back-btn {
+  display: inline-block;
+  margin-top: 10px;
+  color: #74b9ff;
+  text-decoration: none;
 }
