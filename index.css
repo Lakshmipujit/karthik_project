@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+/* Welcome Page */
+.welcome-page {
+  background: url('https://images.unsplash.com/photo-1522204502585-3e03b5a7bc59?auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-container {
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border-radius: 20px;
+}
+
+/* Form Page */
+.form-page {
+  background: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
+  background: rgba(0,0,0,0.7);
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+}
