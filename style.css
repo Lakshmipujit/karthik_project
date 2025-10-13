@@ -1,0 +1,173 @@
+/* ------------------------------
+   General Body Styling
+--------------------------------*/
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+/* ------------------------------
+   Landing Page / Welcome Page
+--------------------------------*/
+.welcome-page {
+  background: url('https://images.unsplash.com/photo-1522204502585-3e03b5a7bc59?auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-container {
+  background: rgba(0,0,0,0.6); /* semi-transparent overlay */
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.welcome-container h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.welcome-container p {
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.start-btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px 0;
+  background: #00b894;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.start-btn:hover {
+  background: #019875;
+}
+
+/* ------------------------------
+   Form Pages (Faculty / Student)
+--------------------------------*/
+.form-page {
+  background: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: rgba(0,0,0,0.7); /* semi-transparent overlay */
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* Form Heading */
+.container h1 {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.container p.lead {
+  font-size: 14px;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+/* Form Fields */
+.field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+label {
+  width: 100px;
+  font-weight: 600;
+  text-align: left;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+/* Control Buttons */
+.controls button {
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#startBtn { background: #0984e3; color: white; }
+#stopBtn { background: #d63031; color: white; }
+#autoFillBtn { background: #00b894; color: white; }
+#clearBtn { background: #636e72; color: white; }
+
+#startBtn:hover { background: #0769b2; }
+#stopBtn:hover { background: #b71c1c; }
+#autoFillBtn:hover { background: #019875; }
+#clearBtn:hover { background: #4b5459; }
+
+/* Status and Transcript */
+.status {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.transcript {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 13px;
+  min-height: 40px;
+}
+
+/* Back button */
+.back-btn {
+  display: inline-block;
+  margin-top: 15px;
+  color: #74b9ff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  label { width: 90px; font-size: 13px; }
+  input { font-size: 12px; padding: 8px; }
+  .controls button { font-size: 12px; padding: 8px 10px; }
+  .welcome-container h1 { font-size: 22px; }
+  .start-btn { font-size: 16px; }
+}
