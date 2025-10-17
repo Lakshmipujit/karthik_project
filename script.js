@@ -81,18 +81,42 @@
     statusEl.textContent = 'Cleared';
   });
 
-  // ✅ Save button sends data to Flask backend
+  // ✅ Save button sends data to Flask backend (robust JSON/error handling)
   saveBtn.addEventListener('click', async () => {
     const data = {};
     Object.keys(inputs).forEach(k => data[k] = inputs[k]?.value?.trim() || '');
 
-    const res = await fetch('/save', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data)
-    });
+    try {
+      const res = await fetch('/save', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
 
-    const result = await res.json();
-    alert(result.message);
+      const contentType = (res.headers.get('content-type') || '').toLowerCase();
+
+      if (!res.ok) {
+        // Try to read JSON message or fallback to text (e.g., HTML 404 page)
+        if (contentType.includes('application/json')) {
+          const err = await res.json();
+          alert(err.message || 'Save failed (server error)');
+        } else {
+          const text = await res.text();
+          alert('Save failed: server returned non-JSON response:\n' + (text.substring(0, 500) || '')); 
+        }
+        return;
+      }
+
+      if (contentType.includes('application/json')) {
+        const result = await res.json();
+        alert(result.message || 'Saved');
+      } else {
+        // Backend returned HTML or other content (common when running on static Pages)
+        const text = await res.text();
+        alert('Save succeeded but server returned non-JSON response:\n' + (text.substring(0, 500) || ''));
+      }
+    } catch (e) {
+      alert('Save failed: ' + e.message + '\n(If you are running the site on GitHub Pages this action requires a running backend at /save)');
+    }
   });
 })();
