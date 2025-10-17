@@ -40,3 +40,29 @@ If you want I can also:
 - add a `.github/copilot-instructions.md` tailored for AI agents
 
 Tell me which of the above you'd like next.
+
+Publish to GitHub Pages (static site)
+-----------------------------------
+If you want to publish this project as a static site on GitHub Pages (avoids ngrok):
+
+1) Ensure you have a git repo and commit the project
+
+```powershell
+cd 'C:\Users\PUJITHA\OneDrive\Desktop\karthik_project'
+git init
+git add .
+git commit -m "Prepare site for GitHub Pages"
+# create a repo on GitHub, then add remote and push
+git remote add origin https://github.com/<your-user>/<repo>.git
+git branch -M main
+git push -u origin main
+```
+
+2) Publish the `docs/` folder from the repo (on GitHub)
+- In your repo on github.com go to Settings → Pages → Build and deployment
+- Choose "Deploy from a branch" and set the branch to `main` and folder to `/docs`
+- Save; the site will be available at https://<your-user>.github.io/<repo>/ after a minute.
+
+Why this avoids 404s
+- GitHub Pages serves static files. Flask templates use server-side rendering (Jinja) so you must publish a static copy (the `docs/` folder contains copies of templates rendered to static HTML with correct `static/` paths).
+
