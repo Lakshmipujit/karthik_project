@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import json, os
 
-# Use project root as template folder because HTML files live in project root
-app = Flask(__name__, template_folder='.')
+# Use default templates/ and static/ folders
+app = Flask(__name__)
 
 @app.route('/')
 def home():
