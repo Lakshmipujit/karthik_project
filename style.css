@@ -171,3 +171,11 @@ input {
   .welcome-container h1 { font-size: 22px; }
   .start-btn { font-size: 16px; }
 }
+/* Add this new button style */
+button.save {
+  background: #16a34a;
+  color: white;
+}
+button.save:hover {
+  background: #15803d;
+}

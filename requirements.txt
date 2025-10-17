@@ -1,0 +1,27 @@
+Flask>=2.0
+Flask>=2.0
+Flask>=2.0
+Voice Form Filler - README
+
+Files:
+- index.html
+- script.js
+
+How to use:
+1. Put both files in the same folder.
+2. Open index.html in Google Chrome (desktop) or Edge.
+3. Click "Start Recording". Grant microphone permission when the browser asks.
+4. Speak phrases like:
+   - "Name is John Doe"
+   - "Age is 28"
+   - "Email is john at example dot com"
+   - "City is Pune"
+5. You can click "Auto-Fill From Transcript" to have the page parse the transcript and populate the inputs.
+6. After values appear, click into your target form (or keep this page) to use/submit them.
+
+Notes & Tips:
+- Web Speech API requires an internet connection (it uses a remote speech service).
+- Best browser: Chrome (desktop). Mobile support varies.
+- If "Start Recording" doesn't work, open browser console (F12) and check errors.
+- The parser is intentionally simple; adapt the regex in script.js to recognize more natural variations.
+- For privacy: spoken audio is sent to the browser vendor's speech service (Google when using Chrome).

@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome | Voice Form Portal</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="welcome-page">
   <div class="welcome-container">
     <h1>🎤 Voice Form Portal</h1>
     <p>Select a dashboard to start filling forms.</p>
-    <button class="start-btn" onclick="window.location.href='faculty.html'">Faculty Dashboard</button>
-    <button class="start-btn" onclick="window.location.href='student.html'">Student Dashboard</button>
+    <button class="start-btn" onclick="window.location.href='/faculty'">Faculty Dashboard</button>
+    <button class="start-btn" onclick="window.location.href='/student'">Student Dashboard</button>
   </div>
 </body>
 </html>

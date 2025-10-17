@@ -1,126 +1,32 @@
-import speech_recognition as sr
-import pyautogui
-import pyttsx3
-import time
+from flask import Flask, render_template, request, jsonify
+import json, os
 
-# Initialize speech engine
-engine = pyttsx3.init()
-engine.setProperty('rate', 160)  # Adjust speaking speed
+# Use project root as template folder because HTML files live in project root
+app = Flask(__name__, template_folder='.')
 
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-def listen():
-    """Listen to user speech and convert to text"""
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening...")
-        audio = r.listen(source, phrase_time_limit=8)
-    try:
-        text = r.recognize_google(audio)
-        print(f"You said: {text}")
-        return text
-    except sr.UnknownValueError:
-        speak("Sorry, I did not understand that.")
-        return ""
-    except sr.RequestError:
-        speak("Internet error. Please check your connection.")
-        return ""
+@app.route('/faculty')
+def faculty():
+    return render_template('faculty.html')
 
-# --- FORM FILLING PROCESS ---
+@app.route('/student')
+def student():
+    return render_template('student.html')
 
-form_data = {}
+@app.route('/save', methods=['POST'])
+def save():
+    data = request.json
+    if not data:
+        return jsonify({"status": "error", "message": "No data received"}), 400
 
-fields = [
-    ("your full name", "name"),
-    ("your age", "age"),
-    ("your email address", "email"),
-    ("your city", "city"),
-]
+    os.makedirs("data", exist_ok=True)
+    with open("data/submissions.json", "a", encoding="utf-8") as f:
+        f.write(json.dumps(data, ensure_ascii=False) + "\n")
 
-speak("Welcome to the voice-based form filling system.")
+    return jsonify({"status": "success", "message": "✅ Data saved successfully!"})
 
-for question, key in fields:
-    speak(f"Please say {question}")
-    print(f"Please say {question}:")
-    answer = listen()
-    form_data[key] = answer
-    time.sleep(1)
-
-speak("Thank you. Now I will fill the form automatically.")
-
-# Wait 3 seconds so you can click in a text field
-time.sleep(3)
-
-# Automatically fill using pyautogui
-for key, value in form_data.items():
-    pyautogui.typewrite(value)
-    pyautogui.press('tab')
-    time.sleep(0.5)
-
-speak("Form filled successfully!")
-print("✅ Form filled successfully!")
-import speech_recognition as sr
-import pyautogui
-import pyttsx3
-import time
-
-# Initialize speech engine
-engine = pyttsx3.init()
-engine.setProperty('rate', 160)  # Adjust speaking speed
-
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
-
-def listen():
-    """Listen to user speech and convert to text"""
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening...")
-        audio = r.listen(source, phrase_time_limit=8)
-    try:
-        text = r.recognize_google(audio)
-        print(f"You said: {text}")
-        return text
-    except sr.UnknownValueError:
-        speak("Sorry, I did not understand that.")
-        return ""
-    except sr.RequestError:
-        speak("Internet error. Please check your connection.")
-        return ""
-
-# --- FORM FILLING PROCESS ---
-
-form_data = {}
-
-fields = [
-    ("your full name", "name"),
-    ("your age", "age"),
-    ("your email address", "email"),
-    ("your city", "city"),
-]
-
-speak("Welcome to the voice-based form filling system.")
-
-for question, key in fields:
-    speak(f"Please say {question}")
-    print(f"Please say {question}:")
-    answer = listen()
-    form_data[key] = answer
-    time.sleep(1)
-
-speak("Thank you. Now I will fill the form automatically.")
-
-# Wait 3 seconds so you can click in a text field
-time.sleep(3)
-
-# Automatically fill using pyautogui
-for key, value in form_data.items():
-    pyautogui.typewrite(value)
-    pyautogui.press('tab')
-    time.sleep(0.5)
-
-speak("Form filled successfully!")
-print("✅ Form filled successfully!")
+if __name__ == '__main__':
+    app.run(debug=True)

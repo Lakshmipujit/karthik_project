@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Faculty Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="form-page">
   <div class="container">
@@ -36,13 +36,14 @@
       <button id="stopBtn" class="secondary" disabled>Stop</button>
       <button id="autoFillBtn" class="secondary">Auto-Fill</button>
       <button id="clearBtn" class="secondary">Clear</button>
+      <button id="saveBtn" class="save">Save</button>
     </div>
 
     <div class="status" id="status">Idle</div>
     <div class="transcript" id="transcript">Transcript will appear here...</div>
-    <a href="index.html" class="back-btn">⬅️ Back to Home</a>
+    <a href="/" class="back-btn">⬅️ Back to Home</a>
   </div>
 
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
