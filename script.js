@@ -53,15 +53,24 @@
     const lowered = text.toLowerCase();
     const result = {};
 
-    const nameMatch = lowered.match(/name is ([a-z\s]+)/i);
+    // name (letters + spaces)
+    const nameMatch = lowered.match(/(?:name)\s*(?:is|:)?\s*([a-z\s]+)/i);
     if (nameMatch) result.name = capitalize(nameMatch[1]);
-    const emailMatch = lowered.match(/email is ([\w\s@.\-]+)/i);
+
+    // email (allow spoken forms like 'john at example dot com')
+    const emailMatch = lowered.match(/(?:email)\s*(?:is|:)?\s*([\w\s@.\-]+)/i);
     if (emailMatch) result.email = emailMatch[1].replace(/\s+at\s+/g, '@').replace(/\s+dot\s+/g, '.').replace(/\s+/g, '');
-    const cityMatch = lowered.match(/city is ([a-z\s]+)/i);
-    if (cityMatch) result.city = capitalize(cityMatch[1]);
-    const deptMatch = lowered.match(/department is ([a-z\s]+)/i);
-    if (deptMatch) result.department = capitalize(deptMatch[1]);
-    const rollMatch = lowered.match(/roll number is (\d+)/i);
+
+    // city: allow letters, numbers, hyphens, ampersand, dots; stop at punctuation
+    const cityMatch = lowered.match(/(?:city)\s*(?:is|:)?\s*([a-z0-9\s\-\&\.]+)/i);
+    if (cityMatch) result.city = capitalize(cityMatch[1].trim().replace(/[\.,;:\!]+$/,''));
+
+    // department / dept: allow similar chars
+    const deptMatch = lowered.match(/(?:department|dept)\s*(?:is|:)?\s*([a-z0-9\s\-\&\.]+)/i);
+    if (deptMatch) result.department = capitalize(deptMatch[1].trim().replace(/[\.,;:\!]+$/,''));
+
+    // roll number (digits)
+    const rollMatch = lowered.match(/roll(?: number)?\s*(?:is|:)?\s*(\d+)/i);
     if (rollMatch) result.roll = rollMatch[1];
 
     Object.keys(result).forEach(k => { if (inputs[k]) inputs[k].value = result[k]; });
