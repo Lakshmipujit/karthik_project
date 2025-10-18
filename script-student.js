@@ -9,7 +9,7 @@
 
   const inputs = {
     name: document.getElementById("name"),
-    department: document.getElementById("department"),
+    age: document.getElementById("age"),
     email: document.getElementById("email"),
     city: document.getElementById("city"),
   };
@@ -62,8 +62,8 @@
     const nameMatch = text.match(/name is ([a-z\s]+)/);
     if (nameMatch) result.name = nameMatch[1].trim();
 
-    const deptMatch = text.match(/department is ([a-z\s]+)/);
-    if (deptMatch) result.department = deptMatch[1].trim().toUpperCase();
+    const ageMatch = text.match(/age is (\d+)/);
+    if (ageMatch) result.age = ageMatch[1];
 
     const emailMatch = text.match(/email is ([\w\s@.\-]+)/);
     if (emailMatch) {
@@ -91,11 +91,11 @@
   saveBtn.onclick = () => {
     const data = {
       name: inputs.name.value,
-      department: inputs.department.value,
+      age: inputs.age.value,
       email: inputs.email.value,
       city: inputs.city.value,
     };
-    localStorage.setItem("facultyData", JSON.stringify(data));
+    localStorage.setItem("studentData", JSON.stringify(data));
     statusEl.textContent = "✅ Saved successfully!";
   };
 })();

@@ -1,77 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Faculty Dashboard</title>
-  <style>
-/* inlined from docs/static/style.css (truncated) */
-body { margin: 0; font-family: 'Poppins', sans-serif; color: #fff; text-align: center; }
-.form-page { background: url('https://i.imghippo.com/files/ftRH7377RWk.jpeg') no-repeat center center; background-size: cover; background-attachment: fixed; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-.container { background: rgba(0,0,0,0.7); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.4); }
-.container h1 { margin-bottom: 10px; font-size: 24px; }
-.field { display:flex; align-items:center; gap:12px; margin-bottom:12px }
-label { width:100px; font-weight:600; text-align:left }
-input { flex:1; padding:10px; border-radius:8px; border:none; font-size:14px }
-.controls button { margin:5px; padding:10px 15px; border-radius:8px; border:none; cursor:pointer; font-size:14px }
-.save { background:#16a34a; color:white }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="form-page">
   <div class="container">
     <h1>Faculty Voice Form Filler</h1>
-    <p class="lead">Click Start and speak. Recognized phrases will populate the inputs.</p>
+    <div class="field"><label>Name</label><input id="name" type="text" /></div>
+    <div class="field"><label>Department</label><input id="department" type="text" /></div>
+    <div class="field"><label>Email</label><input id="email" type="text" /></div>
+    <div class="field"><label>City</label><input id="city" type="text" /></div>
 
-    <div class="field">
-      <label for="name">Name</label>
-      <input id="name" type="text" placeholder="Faculty Name" />
+    <p id="status">Press start to begin speaking...</p>
+    <div id="transcript" class="transcript">Transcript will appear here...</div>
+
+    <div class="buttons">
+      <button id="startBtn">🎙️ Start</button>
+      <button id="stopBtn">⏹️ Stop</button>
+      <button id="autoFillBtn">🪄 Auto-Fill</button>
+      <button id="clearBtn">🧹 Clear</button>
+      <button id="saveBtn">💾 Save</button>
     </div>
 
-    <div class="field">
-      <label for="department">Department</label>
-      <input id="department" type="text" placeholder="e.g. Computer Science" />
-    </div>
-
-    <div class="field">
-      <label for="email">Email</label>
-      <input id="email" type="text" placeholder="e.g. faculty@example.com" />
-    </div>
-
-    <div class="field">
-      <label for="city">City</label>
-      <input id="city" type="text" placeholder="City" />
-    </div>
-
-    <div class="controls">
-      <button id="startBtn">Start Recording</button>
-      <button id="stopBtn" class="secondary" disabled>Stop</button>
-      <button id="autoFillBtn" class="secondary">Auto-Fill</button>
-      <button id="clearBtn" class="secondary">Clear</button>
-      <button id="saveBtn" class="save">Save</button>
-    </div>
-
-    <div class="status" id="status">Idle</div>
-    <div class="transcript" id="transcript">Transcript will appear here...</div>
-    <a href="index.html" class="back-btn">⬅️ Back to Home</a>
+    <button class="home-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
   </div>
 
-  <script>
-// inlined from docs/static/script.js (truncated)
-(function(){
-  function $(id){return document.getElementById(id)}
-  const startBtn=$("startBtn"), stopBtn=$("stopBtn"), autoFillBtn=$("autoFillBtn"), clearBtn=$("clearBtn"), saveBtn=$("saveBtn"), statusEl=$("status"), transcriptEl=$("transcript");
-  const inputs={ name:$("name"), email:$("email"), city:$("city"), department:$("department") };
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition){ statusEl.textContent='Speech API not supported in this browser.'; startBtn.disabled=true; return; }
-  let recog=new SpeechRecognition(); recog.lang='en-IN'; recog.interimResults=false; recog.continuous=false;
-  recog.onstart=()=>{statusEl.textContent='🎤 Listening...'; startBtn.disabled=true; stopBtn.disabled=false}
-  recog.onerror=(e)=>{statusEl.textContent='Error: '+e.error}
-  recog.onend=()=>{statusEl.textContent='Stopped'; startBtn.disabled=false; stopBtn.disabled=true}
-  recog.onresult=(event)=>{transcriptEl.textContent=event.results[0][0].transcript.trim()}
-  function parseAndFill(text){ if(!text) return {}; const lowered=text.toLowerCase(); const result={}; const nameMatch=lowered.match(/name is ([a-z\s]+)/i); if(nameMatch) result.name=nameMatch[1].trim(); const emailMatch=lowered.match(/email is ([\w\s@.\-]+)/i); if(emailMatch) result.email=emailMatch[1].replace(/\s+at\s+/g,'@').replace(/\s+dot\s+/g,'.').replace(/\s+/g,''); Object.keys(result).forEach(k=>{ if(inputs[k]) inputs[k].value=result[k]}); return result }
-  startBtn.addEventListener('click',()=>recog.start()); stopBtn.addEventListener('click',()=>recog.stop()); autoFillBtn.addEventListener('click',()=>parseAndFill(transcriptEl.textContent)); clearBtn.addEventListener('click',()=>{ Object.values(inputs).forEach(i=>i.value=''); transcriptEl.textContent=''; statusEl.textContent='Cleared' });
-  saveBtn.addEventListener('click', async()=>{ const data={}; Object.keys(inputs).forEach(k=>data[k]=inputs[k]?.value?.trim()||''); try{ const res=await fetch('/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); const contentType=(res.headers.get('content-type')||'').toLowerCase(); if(!res.ok){ if(contentType.includes('application/json')){ const err=await res.json(); alert(err.message||'Save failed (server error)'); } else{ const text=await res.text(); alert('Save failed: server returned non-JSON response:\n'+(text.substring(0,500)||'')); } return; } if(contentType.includes('application/json')){ const result=await res.json(); alert(result.message||'Saved') } else { const text=await res.text(); alert('Save succeeded but server returned non-JSON response:\n'+(text.substring(0,500)||'')) } }catch(e){ alert('Save failed: '+e.message+'\n(If you are running the site on GitHub Pages this action requires a running backend at /save)') } });
-})();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
