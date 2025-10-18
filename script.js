@@ -1,75 +1,73 @@
+// script.js — Final unified version for Student + Faculty dashboards
 (() => {
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const autoFillBtn = document.getElementById("autoFillBtn");
-  const clearBtn = document.getElementById("clearBtn");
-  const statusEl = document.getElementById("status");
-  const transcriptEl = document.getElementById("transcript");
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const autoFillBtn = document.getElementById('autoFillBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const statusEl = document.getElementById('status');
+  const transcriptEl = document.getElementById('transcript');
 
+  // Form fields (some may not exist in every dashboard)
   const inputs = {
-    name: document.getElementById("name"),
-    email: document.getElementById("email"),
-    city: document.getElementById("city"),
-    department: document.getElementById("department"),
-    roll: document.getElementById("roll"),
+    name: document.getElementById('name'),
+    age: document.getElementById('age'),
+    roll: document.getElementById('roll'),
+    email: document.getElementById('email'),
+    city: document.getElementById('city'),
+    department: document.getElementById('department'),
   };
 
+  // Speech recognition setup
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    statusEl.textContent = "Speech recognition not supported in this browser. Use Chrome.";
-    startBtn.disabled = true;
+    if (statusEl) statusEl.textContent = 'Speech API not supported in this browser. Use Chrome or Edge.';
+    if (startBtn) startBtn.disabled = true;
     return;
   }
 
-  let recog;
-  let finalTranscript = "";
+  let recog = null;
   let isListening = false;
 
   function initRecognition() {
     recog = new SpeechRecognition();
-    recog.lang = "en-IN";
+    recog.lang = 'en-IN';
     recog.interimResults = false;
     recog.continuous = false;
 
     recog.onstart = () => {
       isListening = true;
-      statusEl.textContent = "🎙️ Listening...";
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
+      if (statusEl) statusEl.textContent = '🎙️ Listening...';
+      if (startBtn) startBtn.disabled = true;
+      if (stopBtn) stopBtn.disabled = false;
     };
 
     recog.onerror = (e) => {
-      console.error("Recognition error:", e);
-      statusEl.textContent = "Error: " + (e.error || "unknown");
-      isListening = false;
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
+      console.error('Speech recognition error:', e);
+      if (statusEl) statusEl.textContent = 'Error: ' + e.error;
+      if (startBtn) startBtn.disabled = false;
+      if (stopBtn) stopBtn.disabled = true;
     };
 
     recog.onend = () => {
       isListening = false;
-      statusEl.textContent = "Stopped";
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
+      if (statusEl) statusEl.textContent = 'Stopped';
+      if (startBtn) startBtn.disabled = false;
+      if (stopBtn) stopBtn.disabled = true;
     };
 
     recog.onresult = (event) => {
       let text = event.results[0][0].transcript.trim();
-      text = text.replace(/\b(\w+)( \1\b)+/gi, "$1"); // Fix duplicate words
-      finalTranscript = text;
-      transcriptEl.textContent = text;
+      console.log('🎤 Transcript:', text);
+      if (transcriptEl) transcriptEl.textContent = text;
     };
   }
 
   function startListening() {
-    if (isListening) return;
-    finalTranscript = "";
-    transcriptEl.textContent = "Listening...";
     if (!recog) initRecognition();
     try {
       recog.start();
     } catch (e) {
-      console.warn(e);
+      console.warn('Error starting recognition:', e);
     }
   }
 
@@ -77,53 +75,77 @@
     if (recog && isListening) recog.stop();
   }
 
+  // Helper functions
+  const titleCase = (s) => s.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const normalize = (t) => t.replace(/[^\w\s@.\-]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  // Parse transcript text and autofill
   function parseAndFill(text) {
-    if (!text || !text.trim()) return {};
-    const lowered = text.toLowerCase();
+    if (!text) return;
+    const lowered = normalize(text.toLowerCase());
     const result = {};
 
-    const nameMatch = lowered.match(/name is ([a-z\s]+)/i);
-    if (nameMatch) result.name = nameMatch[1].trim();
+    // Name
+    const nameMatch = lowered.match(/\bname (?:is|:)?\s*([a-z\s]+)/i);
+    if (nameMatch) result.name = titleCase(nameMatch[1].trim());
 
-    const emailMatch = lowered.match(/email is ([\w\s@.\-]+)/i);
-    if (emailMatch)
-      result.email = emailMatch[1]
-        .trim()
-        .replace(/\s+at\s+/g, "@")
-        .replace(/\s+dot\s+/g, ".")
-        .replace(/\s+/g, "");
+    // Age
+    const ageMatch = lowered.match(/\bage (?:is|:)?\s*(\d{1,3})/i) || lowered.match(/(\d{1,3}) years? old/i);
+    if (ageMatch) result.age = ageMatch[1];
 
-    const cityMatch = lowered.match(/city is ([a-z\s]+)/i);
-    if (cityMatch) result.city = cityMatch[1].trim();
-
-    const deptMatch = lowered.match(/department is ([a-z\s]+)/i);
-    if (deptMatch) result.department = deptMatch[1].trim();
-
-    const rollMatch = lowered.match(/roll number is (\d+)/i);
+    // Roll Number
+    const rollMatch = lowered.match(/\broll(?: number)? (?:is|:)?\s*(\d+)/i);
     if (rollMatch) result.roll = rollMatch[1];
 
-    Object.keys(result).forEach((k) => {
-      if (inputs[k]) inputs[k].value = result[k];
+    // Department
+    const deptMatch =
+      lowered.match(/\bdepartment (?:is|:)?\s*([a-z\s]+)/i) ||
+      lowered.match(/\bdept (?:is|:)?\s*([a-z\s]+)/i) ||
+      lowered.match(/\bfrom (?:the )?([a-z\s]+) department\b/i);
+    if (deptMatch) result.department = titleCase(deptMatch[1].trim());
+
+    // Email
+    const emailMatch =
+      lowered.match(/\bemail (?:is|:)?\s*([\w\s@.\-]+)/i) ||
+      lowered.match(/\b([\w\s]+ at [\w\s]+ dot [\w\s]+)/i);
+    if (emailMatch) {
+      let e = emailMatch[1].trim();
+      e = e.replace(/\s+at\s+/g, '@').replace(/\s+dot\s+/g, '.').replace(/\s+/g, '');
+      result.email = e;
+    }
+
+    // City
+    const cityMatch =
+      lowered.match(/\bcity (?:is|:)?\s*([a-z\s]+)/i) ||
+      lowered.match(/\bi live in\s*([a-z\s]+)/i) ||
+      lowered.match(/\bi am from\s*([a-z\s]+)/i) ||
+      lowered.match(/\bfrom\s*([a-z\s]+)/i);
+    if (cityMatch) result.city = titleCase(cityMatch[1].trim());
+
+    console.log('✅ Parsed result:', result);
+
+    // Autofill fields
+    Object.keys(result).forEach((key) => {
+      if (inputs[key]) inputs[key].value = result[key];
     });
 
-    return result;
+    if (Object.keys(result).length > 0) {
+      statusEl.textContent = '✅ Auto-filled successfully';
+    } else {
+      statusEl.textContent = '⚠️ No matching fields found';
+    }
   }
 
-  startBtn.addEventListener("click", startListening);
-  stopBtn.addEventListener("click", stopListening);
-  autoFillBtn.addEventListener("click", () => {
-    const text = transcriptEl.textContent || "";
-    const parsed = parseAndFill(text);
-    statusEl.textContent = Object.keys(parsed).length
-      ? "✅ Auto-filled fields"
-      : "⚠️ No fields detected";
-  });
-  clearBtn.addEventListener("click", () => {
-    Object.values(inputs).forEach((i) => (i.value = ""));
-    transcriptEl.textContent = "Transcript will appear here...";
-    finalTranscript = "";
-    statusEl.textContent = "Cleared";
+  // Button actions
+  startBtn?.addEventListener('click', startListening);
+  stopBtn?.addEventListener('click', stopListening);
+  autoFillBtn?.addEventListener('click', () => parseAndFill(transcriptEl?.textContent));
+  clearBtn?.addEventListener('click', () => {
+    Object.values(inputs).forEach((i) => (i ? (i.value = '') : null));
+    if (transcriptEl) transcriptEl.textContent = 'Transcript will appear here...';
+    if (statusEl) statusEl.textContent = 'Cleared';
   });
 
   initRecognition();
+  console.log('✅ script.js loaded successfully');
 })();
