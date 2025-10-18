@@ -3,99 +3,127 @@
   const stopBtn = document.getElementById("stopBtn");
   const autoFillBtn = document.getElementById("autoFillBtn");
   const clearBtn = document.getElementById("clearBtn");
-  const saveBtn = document.getElementById("saveBtn");
   const statusEl = document.getElementById("status");
   const transcriptEl = document.getElementById("transcript");
 
   const inputs = {
     name: document.getElementById("name"),
-    department: document.getElementById("department"),
     email: document.getElementById("email"),
     city: document.getElementById("city"),
+    department: document.getElementById("department"),
+    roll: document.getElementById("roll"),
   };
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    statusEl.textContent = "Speech API not supported. Use Chrome or Edge.";
+    statusEl.textContent = "Speech recognition not supported in this browser. Use Chrome.";
     startBtn.disabled = true;
     return;
   }
 
-  let recog = new SpeechRecognition();
-  recog.lang = "en-IN";
-  recog.interimResults = true;
-  recog.continuous = true;
-
+  let recog;
   let finalTranscript = "";
+  let isListening = false;
 
-  recog.onresult = (event) => {
-    let interim = "";
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      const text = event.results[i][0].transcript;
-      if (event.results[i].isFinal) finalTranscript += " " + text.trim();
-      else interim += text;
-    }
-    transcriptEl.textContent = (finalTranscript + " " + interim).trim();
-  };
+  function initRecognition() {
+    recog = new SpeechRecognition();
+    recog.lang = "en-IN";
+    recog.interimResults = false;
+    recog.continuous = false;
 
-  recog.onstart = () => {
-    statusEl.textContent = "Listening...";
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-  };
-  recog.onend = () => {
-    statusEl.textContent = "Stopped.";
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-  };
+    recog.onstart = () => {
+      isListening = true;
+      statusEl.textContent = "🎙️ Listening...";
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
 
-  startBtn.onclick = () => {
+    recog.onerror = (e) => {
+      console.error("Recognition error:", e);
+      statusEl.textContent = "Error: " + (e.error || "unknown");
+      isListening = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    recog.onend = () => {
+      isListening = false;
+      statusEl.textContent = "Stopped";
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    recog.onresult = (event) => {
+      let text = event.results[0][0].transcript.trim();
+      text = text.replace(/\b(\w+)( \1\b)+/gi, "$1"); // Fix duplicate words
+      finalTranscript = text;
+      transcriptEl.textContent = text;
+    };
+  }
+
+  function startListening() {
+    if (isListening) return;
     finalTranscript = "";
-    recog.start();
-  };
-  stopBtn.onclick = () => recog.stop();
+    transcriptEl.textContent = "Listening...";
+    if (!recog) initRecognition();
+    try {
+      recog.start();
+    } catch (e) {
+      console.warn(e);
+    }
+  }
 
-  autoFillBtn.onclick = () => {
-    const text = transcriptEl.textContent.toLowerCase();
+  function stopListening() {
+    if (recog && isListening) recog.stop();
+  }
+
+  function parseAndFill(text) {
+    if (!text || !text.trim()) return {};
+    const lowered = text.toLowerCase();
     const result = {};
 
-    const nameMatch = text.match(/name is ([a-z\s]+)/);
+    const nameMatch = lowered.match(/name is ([a-z\s]+)/i);
     if (nameMatch) result.name = nameMatch[1].trim();
 
-    const deptMatch = text.match(/department is ([a-z\s]+)/);
-    if (deptMatch) result.department = deptMatch[1].trim().toUpperCase();
+    const emailMatch = lowered.match(/email is ([\w\s@.\-]+)/i);
+    if (emailMatch)
+      result.email = emailMatch[1]
+        .trim()
+        .replace(/\s+at\s+/g, "@")
+        .replace(/\s+dot\s+/g, ".")
+        .replace(/\s+/g, "");
 
-    const emailMatch = text.match(/email is ([\w\s@.\-]+)/);
-    if (emailMatch) {
-      let e = emailMatch[1].trim();
-      e = e.replace(/\s+at\s+/g, "@").replace(/\s+dot\s+/g, ".");
-      result.email = e;
-    }
-
-    const cityMatch = text.match(/city is ([a-z\s]+)/) || text.match(/from ([a-z\s]+)/);
+    const cityMatch = lowered.match(/city is ([a-z\s]+)/i);
     if (cityMatch) result.city = cityMatch[1].trim();
+
+    const deptMatch = lowered.match(/department is ([a-z\s]+)/i);
+    if (deptMatch) result.department = deptMatch[1].trim();
+
+    const rollMatch = lowered.match(/roll number is (\d+)/i);
+    if (rollMatch) result.roll = rollMatch[1];
 
     Object.keys(result).forEach((k) => {
       if (inputs[k]) inputs[k].value = result[k];
     });
 
-    statusEl.textContent =
-      Object.keys(result).length > 0 ? "Auto-filled successfully!" : "No match found!";
-  };
+    return result;
+  }
 
-  clearBtn.onclick = () => {
+  startBtn.addEventListener("click", startListening);
+  stopBtn.addEventListener("click", stopListening);
+  autoFillBtn.addEventListener("click", () => {
+    const text = transcriptEl.textContent || "";
+    const parsed = parseAndFill(text);
+    statusEl.textContent = Object.keys(parsed).length
+      ? "✅ Auto-filled fields"
+      : "⚠️ No fields detected";
+  });
+  clearBtn.addEventListener("click", () => {
     Object.values(inputs).forEach((i) => (i.value = ""));
     transcriptEl.textContent = "Transcript will appear here...";
-  };
+    finalTranscript = "";
+    statusEl.textContent = "Cleared";
+  });
 
-  saveBtn.onclick = () => {
-    const data = {
-      name: inputs.name.value,
-      department: inputs.department.value,
-      email: inputs.email.value,
-      city: inputs.city.value,
-    };
-    localStorage.setItem("facultyData", JSON.stringify(data));
-    statusEl.textContent = "✅ Saved successfully!";
-  };
+  initRecognition();
 })();
